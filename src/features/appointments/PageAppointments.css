@@ -1,0 +1,215 @@
+.container {
+    width: 100%;
+    margin: 0 auto;
+    font-family: 'Poppins', sans-serif;
+    min-height: 100vh;
+}
+
+.title {
+    margin-bottom: 24px;
+    font-weight: 600;
+    color: #1e293b;
+    font-size: 24px;
+}
+
+.infoBox {
+    margin-bottom: 24px;
+    padding: 20px;
+    border-radius: 6px;
+    background-color: #eef2ff;
+}
+
+.infoText {
+    font-size: 16px;
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    margin-bottom: 12px;
+    color: #334155;
+}
+
+.infoText:last-child {
+    margin-bottom: 0;
+}
+
+.formPaper {
+    max-width: 500px;
+    margin: 30px auto;
+    background-color: #fff;
+    padding: 28px;
+    border-radius: 14px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.07);
+}
+
+.formLabel {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #334155;
+    font-size: 15px;
+}
+
+.textFieldRoot {
+    border-radius: 8px !important;
+    background-color: #f0f0f0 !important;
+}
+
+.textFieldRoot:hover fieldset {
+    border: 1.5px solid #3b82f6 !important;
+}
+
+.textFieldRoot.Mui-focused fieldset {
+    border: 1.5px solid #3b82f6 !important;
+    box-shadow: 0 0 6px rgba(59, 130, 246, 0.4) !important;
+}
+
+.textFieldInput {
+    padding: 12px !important;
+    font-size: 15px !important;
+    color: #334155 !important;
+}
+
+.datePicker {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+
+.dateSlot {
+    background-color: #ffffff;
+    border: 1.8px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #334155;
+    cursor: pointer;
+    min-width: 85px;
+    height: auto;
+    padding: 10px 8px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.dateSlot:hover {
+    background-color: #f1f5ff;
+    border-color: #3b82f6;
+}
+
+.dateSlotSelected {
+    background-color: #2563eb;
+    color: white;
+    border-color: #2563eb;
+    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.4);
+}
+
+.dateSlotSelected:hover {
+    background-color: #2563eb;
+}
+
+.timeTable {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    gap: 12px;
+    margin-bottom: 32px;
+}
+
+.timeSlot {
+    background-color: #ffffff;
+    border: 1.8px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #334155;
+    cursor: pointer;
+    padding: 10px;
+    text-align: center;
+    transition: all 0.3s ease;
+    user-select: none;
+}
+
+.timeSlot:hover {
+    background-color: #f1f5ff;
+    border-color: #3b82f6;
+}
+
+.timeSlotSelected {
+    background-color: #2563eb;
+    color: #ffffff;
+    border-color: #2563eb;
+}
+
+.timeSlotSelected:hover {
+    background-color: #2563eb;
+}
+
+.timeSlotBusy {
+    background-color: #fee2e2;
+    border-color: #ef4444;
+    color: #991b1b;
+    cursor: not-allowed;
+}
+
+.timeSlotBusy:hover {
+    background-color: #fecaca;
+}
+
+.timeSlotDisabled {
+    background-color: #f3f4f6;
+    border-color: #e5e7eb;
+    color: #9ca3af;
+    cursor: not-allowed;
+}
+
+.submitButton {
+    background-color: #3b82f6;
+    color: white;
+    border: none;
+    padding: 14px 0;
+    font-size: 17px;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    text-transform: none;
+    width: 100%;
+}
+
+.submitButton:hover:not(:disabled) {
+    background-color: #2563eb;
+}
+
+.submitButton:disabled {
+    background-color: #d1d5db;
+    color: #9ca3af;
+    cursor: not-allowed;
+}
+
+.consentLabel {
+    margin-bottom: 24px;
+    color: #334155;
+    font-size: 15px;
+    align-items: flex-start;
+    display: flex;
+}
+
+.checkboxRoot {
+    color: #2563eb;
+}
+
+.checkboxRoot.Mui-checked {
+    color: #2563eb;
+}
+
+.sectionTitle {
+    margin-bottom: 16px;
+    font-weight: 600;
+    color: #1e293b;
+    font-size: 18px;
+}
+
+.avatar {
+    width: 80px;
+    height: 80px;
+    border: 1px solid #1e293b;
+}
