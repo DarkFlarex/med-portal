@@ -1,11 +1,12 @@
 // store/api/misServerApi.ts
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import {API_URL} from "../../constants.ts";
 
 // Типы для докторов
 export interface Doctor {
-  codeid: number;
+  doctor_id: number;
   fio: string;
-  code_department: number;
+  department_id: number;
   department_name: string;
   service_name: string;
   price: number;
@@ -65,7 +66,7 @@ export interface GetEventsRequest {
 }
 
 export interface UpsertEventRequest {
-  code_department?: number;
+  department_id?: number;
   code_doctor?: number;
   event_start: string;
   event_end?: string;
@@ -84,7 +85,7 @@ export interface UpdateDoctorRequest {
 // ====================== API ======================
 export const misServerApi = createApi({
   reducerPath: "misServerApi",
-  baseQuery: fetchBaseQuery({ baseUrl: "https://km.mis.kg/" }), // <-- поменяй на свой бекенд
+  baseQuery: fetchBaseQuery({ baseUrl: API_URL }), // <-- поменяй на свой бекенд
   endpoints: (builder) => ({
     // поиск докторов
     searchDoctors: builder.mutation<SearchResponse, SearchRequest>({

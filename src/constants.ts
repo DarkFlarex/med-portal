@@ -1,1 +1,1 @@
-export const API_URL = 'https://new-kroha.333.kg';
+export const API_URL = 'https://medclinic-online-reg.ibm.kg';

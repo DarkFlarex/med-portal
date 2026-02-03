@@ -10,6 +10,7 @@ import {
     Paper,
 } from "@mui/material";
 import "./PageAppointments.css";
+import {useUpsertEventMutation} from "../../app/api/search.ts";
 
 const PageAppointments = () => {
     const location = useLocation();
@@ -30,6 +31,9 @@ const PageAppointments = () => {
         phone: "",
         dob: "",
     });
+
+    // Хук для вызова API создания записи
+    const [upsertEvent, { isLoading }] = useUpsertEventMutation();
 
     const generateDates = (): Date[] => {
         const dates: Date[] = [];
@@ -69,7 +73,6 @@ const PageAppointments = () => {
         return slots;
     };
 
-
     const timeSlots = generateTimeSlots(durationFromState);
 
     // Форматирование даты
@@ -92,7 +95,7 @@ const PageAppointments = () => {
         }));
     };
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         if (!consent) {
@@ -105,13 +108,36 @@ const PageAppointments = () => {
             return;
         }
 
-        console.log("Отправка данных:", {
-            ...formData,
-            selectedDate,
-            selectedTime,
-            duration: durationFromState,
-            doctor: doctorFromState,
-        });
+        // Формируем дату-время начала записи в ISO формате для API
+        const dateString = selectedDate.toISOString().split("T")[0];
+        const eventStart = `${dateString}T${selectedTime}:00`;
+
+        try {
+            const response = await upsertEvent({
+                department_id: doctorFromState.department_id,
+                code_doctor: doctorFromState.doctor_id,
+                event_start: eventStart,
+                event_end: undefined,
+                fullname: formData.fullname,
+                phone: formData.phone,
+                dob: formData.dob,
+                comments: "",
+            }).unwrap();
+
+            if (response.success) {
+                alert("Запись успешно создана!");
+                // Очистить форму и выбор
+                setSelectedDate(null);
+                setSelectedTime(null);
+                setConsent(false);
+                setFormData({ fullname: "", phone: "", dob: "" });
+            } else {
+                alert("Ошибка при создании записи: " + response.message);
+            }
+        } catch (error) {
+            alert("Произошла ошибка при отправке данных. Попробуйте позже.");
+            console.error(error);
+        }
     };
 
     // Проверка занятых/недоступных слотов
@@ -258,10 +284,10 @@ const PageAppointments = () => {
                 <Button
                     type="submit"
                     variant="contained"
-                    disabled={!consent}
+                    disabled={!consent || isLoading}
                     className="submitButton"
                 >
-                    Записаться
+                    {isLoading ? "Отправка..." : "Записаться"}
                 </Button>
             </Paper>
         </Box>

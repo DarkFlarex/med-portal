@@ -10,15 +10,9 @@ import {
     InputLabel,
     TextField,
 } from "@mui/material";
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-type Doctor = {
-    id: number;
-    name: string;
-    specialization: string;
-    avatar?: string;
-};
+import { useEffect, useState } from "react";
+import { type Department, type Doctor, useSearchDoctorsMutation } from "../../app/api/search.ts";
 
 const appointmentDurations = [
     { label: "15 мин", value: 15 },
@@ -28,26 +22,43 @@ const appointmentDurations = [
 
 const PageDoctors = () => {
     const navigate = useNavigate();
+    const [searchDoctors] = useSearchDoctorsMutation();
 
-    const [doctors] = useState<Doctor[]>([
-        {
-            id: 1,
-            name: "Ашералиев Мухтар Есенжанович",
-            specialization: "Аллерголог",
-            avatar: "",
-        },
-    ]);
+    const [doctors, setDoctors] = useState<Doctor[]>([]);
+    const [departments, setDepartments] = useState<Department[]>([]);
 
-    const [selectedDurations] = useState<number[]>(doctors.map(() => 30));
+    // Для упрощения — все доктора будут с фиксированной длительностью 30 минут
+    const [selectedDurations, setSelectedDurations] = useState<number[]>([]);
 
-    // ❌ Админская логика (оставлена на будущее)
-    // const [editingId, setEditingId] = useState<number | null>(null);
-    // const updateDoctor = () => {};
-    // const onAvatarChange = () => {};
-    // const onChangeDuration = () => {};
+    useEffect(() => {
+        async function fetchDoctors() {
+            try {
+                const res = await searchDoctors({}).unwrap();
+                setDoctors(res.doctors_list);
+                setDepartments(res.departaments);
+                setSelectedDurations(res.doctors_list.map(() => 30));
+            } catch (error) {
+                console.error("Ошибка загрузки докторов", error);
+            }
+        }
+        fetchDoctors();
+    }, [searchDoctors]);
+
+    // Получить название отдела по department_id врача
+    const getDepartmentName = (id: number | string) => {
+        return departments.find((d) => String(d.codeid) === String(id))?.name || "Неизвестно";
+    };
 
     const onCardContentClick = (doctor: Doctor, duration: number) => {
-        navigate("/appointments", { state: { doctor, duration } });
+        navigate("/appointments", {
+            state: {
+                doctor: {
+                    name: doctor.fio,
+                    specialization: getDepartmentName(doctor.department_id), // Обрати внимание на department_id
+                },
+                duration,
+            },
+        });
     };
 
     return (
@@ -68,14 +79,13 @@ const PageDoctors = () => {
             >
                 {doctors.map((doctor, index) => (
                     <Card
-                        key={doctor.id}
+                        key={`${doctor.doctor_id}-${doctor.department_id}`}
                         sx={{
                             cursor: "pointer",
                             width: 320,
                             p: 3,
                             borderRadius: "24px",
-                            background:
-                                "linear-gradient(to bottom left, #e0e4e5, #f2f6f9)",
+                            background: "linear-gradient(to bottom left, #e0e4e5, #f2f6f9)",
                             boxShadow: "0 12px 30px rgba(0,0,0,.15)",
                             transition: ".3s",
                             "&:hover": {
@@ -90,10 +100,7 @@ const PageDoctors = () => {
                                 gap: 1,
                             }}
                             onClick={() =>
-                                onCardContentClick(
-                                    doctor,
-                                    selectedDurations[index]
-                                )
+                                onCardContentClick(doctor, selectedDurations[index])
                             }
                         >
                             {/* Аватар */}
@@ -106,18 +113,16 @@ const PageDoctors = () => {
                                     borderRadius: "50%",
                                     overflow: "hidden",
                                     border: "3px solid #fff",
-                                    backgroundColor: doctor.avatar
-                                        ? "transparent"
-                                        : "#bbb",
+                                    backgroundColor: doctor.img ? "transparent" : "#bbb",
                                     display: "flex",
                                     alignItems: "center",
                                     justifyContent: "center",
                                 }}
                             >
-                                {doctor.avatar ? (
+                                {doctor.img ? (
                                     <Box
                                         component="img"
-                                        src={doctor.avatar}
+                                        src={doctor.img}
                                         alt="Аватар врача"
                                         sx={{
                                             width: "100%",
@@ -139,86 +144,33 @@ const PageDoctors = () => {
                                 )}
                             </Box>
 
-                            {/* ФИО — display only, без hover/focus */}
+                            {/* ФИО */}
                             <TextField
                                 label="ФИО"
-                                value={doctor.name}
+                                value={doctor.fio}
                                 size="small"
                                 fullWidth
                                 InputProps={{ readOnly: true }}
-                                sx={{
-                                    mb: 1,
-
-                                    "& .MuiInputBase-root": {
-                                        backgroundColor: "transparent",
-                                        cursor: "default",
-                                    },
-
-                                    "& .MuiInputBase-input": {
-                                        userSelect: "text",
-                                        cursor: "text",
-                                    },
-
-                                    "& .MuiOutlinedInput-notchedOutline": {
-                                        borderColor: "rgba(0,0,0,0.23)",
-                                    },
-
-                                    "&:hover .MuiOutlinedInput-notchedOutline": {
-                                        borderColor: "rgba(0,0,0,0.23)",
-                                    },
-
-                                    "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
-                                        borderColor: "rgba(0,0,0,0.23)",
-                                    },
-                                }}
+                                sx={{ mb: 1 }}
                                 onClick={(e) => e.stopPropagation()}
                             />
 
-                            {/* Специализация — display only */}
+                            {/* Специализация */}
                             <TextField
                                 label="Специализация"
-                                value={doctor.specialization}
+                                value={getDepartmentName(doctor.department_id)} // Тут тоже department_id
                                 size="small"
                                 fullWidth
                                 InputProps={{ readOnly: true }}
-                                sx={{
-                                    mb: 1,
-
-                                    "& .MuiInputBase-root": {
-                                        backgroundColor: "transparent",
-                                        cursor: "default",
-                                    },
-
-                                    "& .MuiInputBase-input": {
-                                        userSelect: "text",
-                                        cursor: "text",
-                                    },
-
-                                    "& .MuiOutlinedInput-notchedOutline": {
-                                        borderColor: "rgba(0,0,0,0.23)",
-                                    },
-
-                                    "&:hover .MuiOutlinedInput-notchedOutline": {
-                                        borderColor: "rgba(0,0,0,0.23)",
-                                    },
-
-                                    "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
-                                        borderColor: "rgba(0,0,0,0.23)",
-                                    },
-                                }}
+                                sx={{ mb: 1 }}
                                 onClick={(e) => e.stopPropagation()}
                             />
 
-                            {/* Время приёма — disabled, но визуально как обычное */}
+                            {/* Время приёма */}
                             <FormControl fullWidth>
                                 <InputLabel
                                     id={`duration-${index}`}
-                                    sx={{
-                                        color: "text.primary",
-                                        "&.Mui-disabled": {
-                                            color: "text.primary",
-                                        },
-                                    }}
+                                    sx={{ color: "text.primary", "&.Mui-disabled": { color: "text.primary" } }}
                                 >
                                     Время приёма
                                 </InputLabel>
@@ -228,60 +180,21 @@ const PageDoctors = () => {
                                     value={selectedDurations[index]}
                                     label="Время приёма"
                                     disabled
-                                    sx={{
-                                        borderRadius: "12px",
-                                        backgroundColor: "transparent",
-
-                                        "& .MuiSelect-select": {
-                                            color: "text.primary",
-                                            userSelect: "text",
-                                        },
-
-                                        "&.Mui-disabled .MuiSelect-select": {
-                                            WebkitTextFillColor: "inherit",
-                                        },
-
-                                        "& .MuiOutlinedInput-notchedOutline": {
-                                            borderColor: "rgba(0,0,0,0.23)",
-                                        },
-
-                                        "&:hover .MuiOutlinedInput-notchedOutline": {
-                                            borderColor: "rgba(0,0,0,0.23)",
-                                        },
-                                    }}
+                                    sx={{ borderRadius: "12px", backgroundColor: "transparent" }}
                                     onClick={(e) => e.stopPropagation()}
                                 >
                                     {appointmentDurations.map((option) => (
-                                        <MenuItem
-                                            key={option.value}
-                                            value={option.value}
-                                        >
+                                        <MenuItem key={option.value} value={option.value}>
                                             {option.label}
                                         </MenuItem>
                                     ))}
                                 </Select>
                             </FormControl>
-
-                            {/* ❌ Админская кнопка (оставлена закомментированной) */}
-                            {/*
-                            <Button
-                                variant="outlined"
-                                sx={{ borderRadius: "12px", mt: 1 }}
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    setEditingId(doctor.id);
-                                }}
-                            >
-                                Редактировать
-                            </Button>
-                            */}
                         </CardContent>
                     </Card>
                 ))}
 
-                {doctors.length === 0 && (
-                    <Typography>Врачи не найдены</Typography>
-                )}
+                {doctors.length === 0 && <Typography>Врачи не найдены</Typography>}
             </Grid>
         </Box>
     );
