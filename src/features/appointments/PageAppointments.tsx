@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import {useState, useMemo, useRef, useEffect} from "react";
 import { useLocation } from "react-router-dom";
 import {
   Box,
@@ -16,13 +16,13 @@ import {
 } from "../../app/api/search.ts";
 
 type WeekDay =
-  | "monday"
-  | "tuesday"
-  | "wednesday"
-  | "thursday"
-  | "friday"
-  | "saturday"
-  | "sunday";
+    | "monday"
+    | "tuesday"
+    | "wednesday"
+    | "thursday"
+    | "friday"
+    | "saturday"
+    | "sunday";
 
 const weekMap: Record<number, WeekDay> = {
   0: "sunday",
@@ -107,16 +107,16 @@ const PageAppointments = () => {
 
   // Форматирование даты
   const formatDate = (date: Date): string =>
-    date
-      .toLocaleDateString("ru-RU", {
-        weekday: "short",
-        day: "numeric",
-        month: "short",
-      })
-      .replace(".", "");
+      date
+          .toLocaleDateString("ru-RU", {
+            weekday: "short",
+            day: "numeric",
+            month: "short",
+          })
+          .replace(".", "");
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+      e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -222,7 +222,7 @@ const PageAppointments = () => {
       const m = current % 60;
 
       slots.push(
-        `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}`
+          `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}`
       );
 
       current += stepMinutes;
@@ -236,134 +236,204 @@ const PageAppointments = () => {
     return generateTimeSlots(selectedDate, durationFromState);
   }, [selectedDate, durationFromState]);
 
+  const datePickerRef = useRef<HTMLDivElement>(null);
+  const isHoveringRef = useRef(false);
+  // Функция прокрутки вперед/назад на 100px (можно настроить)
+  // const scrollAmount = 100;
+
+  // const scrollLeft = () => {
+  //   if (datePickerRef.current) {
+  //     datePickerRef.current.scrollBy({ left: -scrollAmount, behavior: "smooth" });
+  //   }
+  // };
+  //
+  // const scrollRight = () => {
+  //   if (datePickerRef.current) {
+  //     datePickerRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" });
+  //   }
+  // };
+  // Предотвращаем вертикальный скролл при горизонтальном прокручивании колесом мыши или тачпадом
+  useEffect(() => {
+    const el = datePickerRef.current;
+    if (!el) return;
+
+    const onMouseEnter = () => {
+      isHoveringRef.current = true;
+    };
+
+    const onMouseLeave = () => {
+      isHoveringRef.current = false;
+    };
+
+    const onWheel = (e: WheelEvent) => {
+      if (!isHoveringRef.current) return;
+
+      if (e.deltaY !== 0) {
+        e.preventDefault(); // отменяем вертикальный скролл страницы
+        el.scrollLeft += e.deltaY; // скроллим горизонтально колесом мыши
+      }
+    };
+
+    el.addEventListener("mouseenter", onMouseEnter);
+    el.addEventListener("mouseleave", onMouseLeave);
+    el.addEventListener("wheel", onWheel, { passive: false });
+
+    return () => {
+      el.removeEventListener("mouseenter", onMouseEnter);
+      el.removeEventListener("mouseleave", onMouseLeave);
+      el.removeEventListener("wheel", onWheel);
+    };
+  }, []);
+
   return (
-    <Box className="container">
-      <Box className="infoBox">
-        <Typography className="infoText">
-          <strong>Специальность:</strong> {doctorFromState.department_name}
-        </Typography>
-        <Typography className="infoText">
-          <strong>Врач:</strong> {doctorFromState.fio}
-        </Typography>
-        <Typography className="infoText">
-          <strong>Длительность приёма:</strong> {durationFromState} минут
-        </Typography>
-      </Box>
-
-      <Paper component="form" onSubmit={handleSubmit} className="formPaper">
-        <Box style={{ marginBottom: 24 }}>
-          <Typography className="formLabel">Ф.И.О. пациента</Typography>
-          <TextField
-            name="fullname"
-            placeholder="Иван Иванов"
-            required
-            fullWidth
-            value={formData.fullname}
-            onChange={handleInputChange}
-            InputProps={{
-              classes: {
-                root: "textFieldRoot",
-                input: "textFieldInput",
-              },
-            }}
-          />
-        </Box>
-
-        <Box style={{ marginBottom: 24 }}>
-          <Typography className="formLabel">Номер телефона</Typography>
-          <TextField
-            name="phone"
-            placeholder="996"
-            type="tel"
-            required
-            fullWidth
-            value={formData.phone}
-            onChange={handleInputChange}
-          />
-        </Box>
-
-        <Box style={{ marginBottom: 24 }}>
-          <Typography className="formLabel">Дата рождения</Typography>
-          <TextField
-            name="dob"
-            type="date"
-            required
-            fullWidth
-            value={formData.dob}
-            onChange={handleInputChange}
-          />
-        </Box>
-
-        <Typography className="sectionTitle">Выберите дату и время</Typography>
-
-        <Box className="datePicker">
-          {dates.map((date: Date, index: number) => (
-            <Box
-              key={index}
-              onClick={() => setSelectedDate(date)}
-              className={
-                selectedDate?.toDateString() === date.toDateString()
-                  ? "dateSlot dateSlotSelected"
-                  : "dateSlot"
-              }
-            >
-              {formatDate(date)}
-            </Box>
-          ))}
-        </Box>
-        {timeSlots.length === 0 && (
-          <Typography color="error">
-            В выбранный день врач не принимает
+      <Box className="container">
+        <Box className="infoBox">
+          <Typography className="infoText">
+            <strong>Специальность:</strong> {doctorFromState.department_name}
           </Typography>
-        )}
-        <Box className="timeTable">
-          {timeSlots.map((time: string, index: number) => {
-            const isBusy = isTimeSlotBusy(time);
-            const isDisabled = isTimeSlotDisabled(time);
-
-            let classNames = "timeSlot";
-            if (selectedTime === time && !isBusy && !isDisabled)
-              classNames += " timeSlotSelected";
-            if (isBusy) classNames += " timeSlotBusy";
-            if (isDisabled) classNames += " timeSlotDisabled";
-
-            return (
-              <Box
-                key={index}
-                onClick={() => !isBusy && !isDisabled && setSelectedTime(time)}
-                className={classNames}
-                style={{
-                  cursor: isBusy || isDisabled ? "not-allowed" : "pointer",
-                }}
-              >
-                {time}
-              </Box>
-            );
-          })}
+          <Typography className="infoText">
+            <strong>Врач:</strong> {doctorFromState.fio}
+          </Typography>
+          <Typography className="infoText">
+            <strong>Длительность приёма:</strong> {durationFromState} минут
+          </Typography>
         </Box>
 
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={consent}
-              onChange={(e) => setConsent(e.target.checked)}
-              classes={{ root: "checkboxRoot" }}
+        <Paper component="form" onSubmit={handleSubmit} className="formPaper">
+          <Box style={{ marginBottom: 24 }}>
+            <Typography className="formLabel">Ф.И.О. пациента</Typography>
+            <TextField
+                name="fullname"
+                placeholder="Иван Иванов"
+                required
+                fullWidth
+                value={formData.fullname}
+                onChange={handleInputChange}
+                InputProps={{
+                  classes: {
+                    root: "textFieldRoot",
+                    input: "textFieldInput",
+                  },
+                }}
             />
-          }
-          label="Я соглашаюсь на обработку персональных данных"
-          className="consentLabel"
-        />
+          </Box>
 
-        <Button
-          type="submit"
-          variant="contained"
-          disabled={!consent || isLoading}
-          className="submitButton"
-        >
-          {isLoading ? "Отправка..." : "Записаться"}
-        </Button>
-      </Paper>
-    </Box>
+          <Box style={{ marginBottom: 24 }}>
+            <Typography className="formLabel">Номер телефона</Typography>
+            <TextField
+                name="phone"
+                placeholder="996"
+                type="tel"
+                required
+                fullWidth
+                value={formData.phone}
+                onChange={handleInputChange}
+            />
+          </Box>
+
+          <Box style={{ marginBottom: 24 }}>
+            <Typography className="formLabel">Дата рождения</Typography>
+            <TextField
+                name="dob"
+                type="date"
+                required
+                fullWidth
+                value={formData.dob}
+                onChange={handleInputChange}
+            />
+          </Box>
+
+          <Typography className="sectionTitle">Выберите дату и время</Typography>
+
+          {/* Простой для больших экранов */}
+          <Box className="datePicker">
+            {dates.map((date: Date, index: number) => (
+                <Box
+                    key={index}
+                    onClick={() => setSelectedDate(date)}
+                    className={
+                      selectedDate?.toDateString() === date.toDateString()
+                          ? "dateSlot dateSlotSelected"
+                          : "dateSlot"
+                    }
+                >
+                  {formatDate(date)}
+                </Box>
+            ))}
+          </Box>
+
+          {/* С прокруткой для маленьких экранов */}
+          <Box className="datePickerWrapper">
+            <Box className="datePickerScroll" ref={datePickerRef}>
+              {dates.map((date: Date, index: number) => (
+                  <Box
+                      key={index}
+                      onClick={() => setSelectedDate(date)}
+                      className={
+                        selectedDate?.toDateString() === date.toDateString()
+                            ? "dateSlot dateSlotSelected"
+                            : "dateSlot"
+                      }
+                  >
+                    {formatDate(date)}
+                  </Box>
+              ))}
+            </Box>
+          </Box>
+
+          {timeSlots.length === 0 && (
+              <Typography color="error">
+                В выбранный день врач не принимает
+              </Typography>
+          )}
+          <Box className="timeTable">
+            {timeSlots.map((time: string, index: number) => {
+              const isBusy = isTimeSlotBusy(time);
+              const isDisabled = isTimeSlotDisabled(time);
+
+              let classNames = "timeSlot";
+              if (selectedTime === time && !isBusy && !isDisabled)
+                classNames += " timeSlotSelected";
+              if (isBusy) classNames += " timeSlotBusy";
+              if (isDisabled) classNames += " timeSlotDisabled";
+
+              return (
+                  <Box
+                      key={index}
+                      onClick={() => !isBusy && !isDisabled && setSelectedTime(time)}
+                      className={classNames}
+                      style={{
+                        cursor: isBusy || isDisabled ? "not-allowed" : "pointer",
+                      }}
+                  >
+                    {time}
+                  </Box>
+              );
+            })}
+          </Box>
+
+          <FormControlLabel
+              control={
+                <Checkbox
+                    checked={consent}
+                    onChange={(e) => setConsent(e.target.checked)}
+                    classes={{ root: "checkboxRoot" }}
+                />
+              }
+              label="Я соглашаюсь на обработку персональных данных"
+              className="consentLabel"
+          />
+
+          <Button
+              type="submit"
+              variant="contained"
+              disabled={!consent || isLoading}
+              className="submitButton"
+          >
+            {isLoading ? "Отправка..." : "Записаться"}
+          </Button>
+        </Paper>
+      </Box>
   );
 };
 

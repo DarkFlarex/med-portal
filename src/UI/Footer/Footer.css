@@ -15,8 +15,15 @@
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
-    padding: 40px 20px;
+    padding: 40px 0px; /* паддинг по умолчанию для ширины <1156 */
     gap: 30px;
+}
+
+/* Для экранов шире или равных 1156px — меняем паддинг */
+@media (min-width: 1156px) {
+    .footer-content {
+        padding: 40px 20px;
+    }
 }
 
 .footer-section {

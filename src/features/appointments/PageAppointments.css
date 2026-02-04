@@ -213,3 +213,92 @@
     height: 80px;
     border: 1px solid #1e293b;
 }
+
+
+.datePickerWrapper {
+    display: none;
+}
+
+@media (max-width: 446px) {
+    /* На маленьких экранах скрываем простой */
+    .datePicker {
+        display: none;
+    }
+
+    /* Показываем прокручиваемый блок */
+    .datePickerWrapper {
+        display: block;
+        margin-bottom: 24px;
+    }
+}
+
+    .datePickerScroll {
+        overflow-x: auto;
+        overflow-y: hidden; /* Оставляем, чтобы вертикальный скролл не был виден */
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin; /* Показываем тонкую полосу прокрутки в Firefox */
+        scrollbar-color: #3b82f6 #e0e0e0; /* Цвет полосы и фона полосы в Firefox */
+        white-space: nowrap;
+        scroll-behavior: smooth;
+        padding: 0 8px;
+        height: 48px; /* чтобы был виден скроллбар */
+        box-sizing: content-box; /* важно, чтобы скроллбар не урезал содержимое */
+    }
+
+    /* Показываем стандартный скроллбар в WebKit (Chrome, Safari) */
+    .datePickerScroll::-webkit-scrollbar {
+        height: 8px;
+    }
+
+    .datePickerScroll::-webkit-scrollbar-track {
+        background: #e0e0e0;
+        border-radius: 4px;
+    }
+
+    .datePickerScroll::-webkit-scrollbar-thumb {
+        background-color: #3b82f6;
+        border-radius: 4px;
+    }
+
+
+    .dateSlot {
+        display: inline-block;
+        min-width: 85px;
+        margin-right: 8px;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .scrollButton {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 32px;
+        height: 32px;
+        background-color: #3b82f6;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 18px;
+        user-select: none;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0;
+        z-index: 10;
+    }
+
+    .scrollButton:disabled {
+        background-color: #a5b4fc;
+        cursor: default;
+    }
+
+    .scrollButton:first-of-type {
+        left: -20px; /* Левая кнопка */
+    }
+
+    .scrollButton:last-of-type {
+        right: -20px; /* Правая кнопка */
+    }
+
