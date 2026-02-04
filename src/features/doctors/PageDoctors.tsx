@@ -45,16 +45,27 @@ const PageDoctors = () => {
     }, [searchDoctors]);
 
     // Получить название отдела по department_id врача
-    const getDepartmentName = (id: number | string) => {
-        return departments.find((d) => String(d.codeid) === String(id))?.name || "Неизвестно";
+    const getDepartmentName = (doctor: Doctor) => {
+        // 1️⃣ если бэк уже прислал название
+        if (doctor.department_name?.trim()) {
+            return doctor.department_name;
+        }
+
+        // 2️⃣ fallback — ищем в departaments
+        return (
+            departments.find(
+                (d) => Number(d.codeid) === Number(doctor.department_id)
+            )?.name || "Неизвестно"
+        );
     };
+
 
     const onCardContentClick = (doctor: Doctor, duration: number) => {
         navigate("/appointments", {
             state: {
                 doctor: {
                     name: doctor.fio,
-                    specialization: getDepartmentName(doctor.department_id), // Обрати внимание на department_id
+                    specialization: getDepartmentName(doctor),
                 },
                 duration,
             },
@@ -158,14 +169,11 @@ const PageDoctors = () => {
                             {/* Специализация */}
                             <TextField
                                 label="Специализация"
-                                value={getDepartmentName(doctor.department_id)} // Тут тоже department_id
+                                value={getDepartmentName(doctor)}
                                 size="small"
                                 fullWidth
                                 InputProps={{ readOnly: true }}
-                                sx={{ mb: 1 }}
-                                onClick={(e) => e.stopPropagation()}
                             />
-
                             {/* Время приёма */}
                             <FormControl fullWidth>
                                 <InputLabel
