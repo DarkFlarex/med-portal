@@ -8,7 +8,7 @@ interface Department {
 }
 const PageDirections = () => {
   const navigate = useNavigate();
-  const { data: departments } = useGetDepartmentsQuery({ clinicId: 1 });
+  const { data: departments = [] } = useGetDepartmentsQuery({ clinicId: 1 });
   const departmentsGrouped = useMemo(() => {
     if (!departments?.departaments?.length)
       return {} as Record<string, Department[]>;
