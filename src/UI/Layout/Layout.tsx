@@ -2,12 +2,18 @@ import React from "react";
 import { Container } from "@mui/material";
 import AppToolbar from "../AppToolbar/AppToolbar";
 import Footer from "../Footer/Footer.tsx";
+import {useLocation} from "react-router-dom";
 
 const Layout: React.FC<React.PropsWithChildren> = ({ children }) => {
-    console.log("LAYOUT RENDER");
+    const location = useLocation();
+
+
+    const onExcludedPage =
+        location.pathname.includes("/login") ||
+        location.pathname.includes("/register");
     return (
         <>
-            <AppToolbar />
+            {!onExcludedPage && <AppToolbar />}
             <Container  maxWidth="lg"
                         sx={{
                             display: "flex",
@@ -17,7 +23,7 @@ const Layout: React.FC<React.PropsWithChildren> = ({ children }) => {
                         }}>
                 {children}
             </Container>
-            <Footer/>
+            {!onExcludedPage && <Footer/>}
         </>
     );
 };

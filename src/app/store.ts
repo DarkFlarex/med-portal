@@ -1,12 +1,10 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import { persistStore } from "redux-persist";
 
-import { clinicsReducer } from "../features/MedicalFacility/clinicsSlice";
 import { misServerApi } from "./api/search"; // <-- импортируем наш RTK Query API
 
 // комбинируем редьюсеры
 const rootReducer = combineReducers({
-  clinics: clinicsReducer,
   [misServerApi.reducerPath]: misServerApi.reducer, // <-- добавляем редьюсер RTK Query
 });
 
