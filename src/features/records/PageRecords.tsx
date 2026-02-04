@@ -1,78 +1,72 @@
-import {Button, Grid, Typography} from "@mui/material";
-
+import { Button, Grid, Typography } from "@mui/material";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const PageRecords = () => {
+    const { state } = useLocation();
+    const navigate = useNavigate();
+
+    if (!state) {
+        return <Typography>Запись не найдена</Typography>;
+    }
+
+    const {
+        recordId,
+        fullname,
+        phone,
+        doctor,
+        department,
+        date,
+        time,
+    } = state;
+
     return (
-        <>
-            <Grid  className="hidden">
-                <Grid sx={{
+        <Grid display="flex" justifyContent="center" mt={4}>
+            <Grid
+                sx={{
                     background: "#fff",
                     padding: "20px 30px",
                     borderRadius: "12px",
                     maxWidth: "400px",
                     textAlign: "center",
-                }}>
-                    <img src="public/checkmark.png" width="130" height="130" alt=""/>
-                    <Typography
-                    sx={{
-                        color: "#3b82f6",
-                        fontSize: "24px",
-                        fontWeight: "bold",
-                    }}
-                    >Запись успешно создана!</Typography>
-                    <Typography
-                    sx={{
-                        fontSize: "14px",
+                }}
+            >
+                <img src="/checkmark.png" width="130" height="130" alt="" />
 
-                    }}
-                    >
-                        Уважаемые пациенты!
-                        Если вы не сможете прийти на прием, отмените вашу он лайн запись, позвонив в регистратуру или
-                        написав нам на вотсап! Ваш звонок поможет попасть на прием к врачу другому пациенту!
-                    </Typography>
-                    <Typography sx={{
-                        fontSize: "18px",
-                        fontWeight: "bold",
-                    }}>Номер записи:
-                        <span></span>
-                    </Typography>
-                    <p>
-                        <strong>ФИО:</strong>
-                        <span></span>
-                    </p>
-                    <p>
-                        <strong>Номер телефона (Whatsapp):
-                    </strong>
-                        <span></span>
-                    </p>
-                    <p>
-                        <strong>Врач:</strong>
-                        <span></span>
-                    </p>
-                    <p>
-                        <strong>Дата:</strong>
-                        <span></span>
-                    </p>
-                    <p>
-                        <strong>Время:</strong>
-                        <span></span>
-                    </p>
-                    <Button
+                <Typography
+                    sx={{ color: "#3b82f6", fontSize: "24px", fontWeight: "bold" }}
+                >
+                    Запись успешно создана!
+                </Typography>
+
+                <Typography fontSize={14} mt={1}>
+                    Если вы не сможете прийти на приём, отмените запись, позвонив в
+                    регистратуру.
+                </Typography>
+
+                <Typography fontSize={18} fontWeight="bold" mt={2}>
+                    Номер записи: {recordId}
+                </Typography>
+
+                <p><strong>ФИО:</strong> {fullname}</p>
+                <p><strong>Телефон:</strong> {phone}</p>
+                <p><strong>Врач:</strong> {doctor}</p>
+                <p><strong>Дата:</strong> {date}</p>
+                <p><strong>Время:</strong> {time}</p>
+
+                <Button
+                    onClick={() => navigate("/")}
                     sx={{
                         marginTop: "15px",
                         background: "#3b82f6",
                         color: "white",
-                        border: "none",
-                        padding: "5px 15px",
                         borderRadius: "6px",
-                        cursor: "pointer",
-                        transition: "background 0.3s",
                         textTransform: "capitalize",
                     }}
-                    >Назад</Button>
-                </Grid>
+                >
+                    Назад
+                </Button>
             </Grid>
-        </>
+        </Grid>
     );
 };
 

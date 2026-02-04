@@ -121,8 +121,12 @@ export const misServerApi = createApi({
 
     // создание/обновление события
     upsertEvent: builder.mutation<
-      { success: boolean; message: string },
-      UpsertEventRequest
+        {
+          success: boolean;
+          message: string;
+          res: { codeid: number }[];
+        },
+        UpsertEventRequest
     >({
       query: (body) => ({
         url: "upsert_event",
@@ -130,6 +134,7 @@ export const misServerApi = createApi({
         body,
       }),
     }),
+
 
     // проверка пароля
     checkPassword: builder.mutation<{ success: boolean }, { password: string }>(

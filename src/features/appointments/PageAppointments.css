@@ -2,7 +2,6 @@
     width: 100%;
     margin: 0 auto;
     font-family: 'Poppins', sans-serif;
-    min-height: 100vh;
 }
 
 .title {
@@ -40,6 +39,11 @@
     border-radius: 14px;
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.07);
 }
+
+
+    .formPaper {
+        margin: 0 auto;
+    }
 
 .formLabel {
     display: block;
@@ -219,12 +223,10 @@
     display: none;
 }
 
-@media (max-width: 446px) {
-    /* На маленьких экранах скрываем простой */
+@media (max-width: 470px) {
     .datePicker {
         display: none;
     }
-
     /* Показываем прокручиваемый блок */
     .datePickerWrapper {
         display: block;

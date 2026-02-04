@@ -11,3 +11,9 @@ body {
     flex-direction: column;
     min-height: 100vh;
 }
+
+@media (max-width: 446px) {
+    .css-jfdv4h-MuiStack-root > :not(style) ~ :not(style) {
+        margin-top: 0 !important;
+    }
+}

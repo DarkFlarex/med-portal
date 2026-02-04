@@ -1,5 +1,5 @@
 import {useState, useMemo, useRef, useEffect} from "react";
-import { useLocation } from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import {
   Box,
   Typography,
@@ -35,8 +35,8 @@ const weekMap: Record<number, WeekDay> = {
 };
 
 const PageAppointments = () => {
+  const navigate = useNavigate();
   const location = useLocation();
-
   const doctorFromState = location.state?.doctor ?? {
     fio: "Ашералиев Мухтар Есенжанович",
     department_name: "Аллерголог 5",
@@ -155,11 +155,19 @@ const PageAppointments = () => {
       }).unwrap();
 
       if (response.success) {
-        alert("Запись успешно создана!");
-        setSelectedDate(null);
-        setSelectedTime(null);
-        setConsent(false);
-        setFormData({ fullname: "", phone: "", dob: "" });
+        const recordId = response.res?.[0]?.codeid;
+
+        navigate("/records", {
+          state: {
+            recordId,
+            fullname: formData.fullname,
+            phone: formData.phone,
+            doctor: doctorFromState.fio,
+            department: doctorFromState.department_name,
+            date: selectedDate.toLocaleDateString("ru-RU"),
+            time: selectedTime,
+          },
+        });
       } else {
         alert("Ошибка при создании записи: " + response.message);
       }
