@@ -88,21 +88,21 @@ export const misServerApi = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: API_URL }), // <-- поменяй на свой бекенд
   endpoints: (builder) => ({
     // поиск докторов
-    searchDoctors: builder.query<SearchResponse, SearchRequest>({
+    searchDoctors: builder.query({
       query: (params) => ({
         url: "api/searchDoctors",
         params,
       }),
     }),
 
-    clinics: builder.query<Clinic[], void>({
+    clinics: builder.query({
       query: () => ({
         url: "api/clinics",
         method: "GET",
       }),
     }),
 
-    getDepartments: builder.query<any, any>({
+    getDepartments: builder.query({
       query: (params) => ({
         url: "api/departments",
         method: "GET",
@@ -111,7 +111,7 @@ export const misServerApi = createApi({
     }),
 
     // получение событий
-    getEvents: builder.query<any, any>({
+    getEvents: builder.query({
       query: (params) => ({
         url: "/api/get_events",
         method: "GET",
@@ -120,14 +120,7 @@ export const misServerApi = createApi({
     }),
 
     // создание/обновление события
-    upsertEvent: builder.mutation<
-        {
-          success: boolean;
-          message: string;
-          res: { codeid: number }[];
-        },
-        UpsertEventRequest
-    >({
+    upsertEvent: builder.mutation({
       query: (body) => ({
         url: "upsert_event",
         method: "POST",
@@ -135,23 +128,17 @@ export const misServerApi = createApi({
       }),
     }),
 
-
     // проверка пароля
-    checkPassword: builder.mutation<{ success: boolean }, { password: string }>(
-      {
-        query: (body) => ({
-          url: "check_password",
-          method: "POST",
-          body,
-        }),
-      }
-    ),
+    checkPassword: builder.mutation({
+      query: (body) => ({
+        url: "check_password",
+        method: "POST",
+        body,
+      }),
+    }),
 
     // обновление online_regis доктора
-    updateDoctorOnline: builder.mutation<
-      { success: boolean; message: string },
-      UpdateDoctorRequest
-    >({
+    updateDoctorOnline: builder.mutation({
       query: (body) => ({
         url: "update_doctor_online",
         method: "POST",

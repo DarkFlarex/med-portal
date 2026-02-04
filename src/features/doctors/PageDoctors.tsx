@@ -4,26 +4,10 @@ import {
   CardContent,
   Grid,
   Typography,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
   TextField,
 } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import {
-  type Department,
-  type Doctor,
-  useGetDepartmentsQuery,
-  useSearchDoctorsQuery,
-} from "../../app/api/search.ts";
-
-const appointmentDurations = [
-  { label: "15 мин", value: 15 },
-  { label: "30 мин", value: 30 },
-  { label: "1 час", value: 60 },
-];
+import { useSearchDoctorsQuery } from "../../app/api/search.ts";
 
 const PageDoctors = () => {
   const navigate = useNavigate();
@@ -32,8 +16,6 @@ const PageDoctors = () => {
   const { data: doctors = [] } = useSearchDoctorsQuery({
     departmentId: departmentId,
   });
-  // Для упрощения — все доктора будут с фиксированной длительностью 30 минут
-  const [selectedDurations, setSelectedDurations] = useState<number[]>([]);
 
   return (
     <Box sx={{ width: "100%" }}>
@@ -51,7 +33,7 @@ const PageDoctors = () => {
           width: "100%",
         }}
       >
-        {doctors.map((doctor, index) => (
+        {doctors.map((doctor: any) => (
           <Card
             key={`${doctor.doctor_id}-${doctor.department_id}`}
             sx={{
@@ -140,33 +122,6 @@ const PageDoctors = () => {
                 sx={{ mb: 1 }}
                 onClick={(e) => e.stopPropagation()}
               />
-
-              <FormControl fullWidth>
-                <InputLabel
-                  id={`duration-${index}`}
-                  sx={{
-                    color: "text.primary",
-                    "&.Mui-disabled": { color: "text.primary" },
-                  }}
-                >
-                  Время приёма
-                </InputLabel>
-
-                <Select
-                  labelId={`duration-${index}`}
-                  value={selectedDurations[index]}
-                  label="Время приёма"
-                  disabled
-                  sx={{ borderRadius: "12px", backgroundColor: "transparent" }}
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  {appointmentDurations.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                      {option.label}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
             </CardContent>
           </Card>
         ))}

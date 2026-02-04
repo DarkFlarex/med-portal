@@ -5,7 +5,7 @@ import { useClinicsQuery } from "../../app/api/search";
 const MedicalFacility = () => {
   const navigate = useNavigate();
 
-  const { data: clinics, isLoading } = useClinicsQuery();
+  const { data: clinics, isLoading } = useClinicsQuery({});
 
   const onClickClinic = (clinic: any) => {
     navigate("/directions", { state: { clinic } });
