@@ -31,7 +31,6 @@ const PageDoctors = () => {
   const departmentId = location.state?.departmentId;
   const { data: doctors = [] } = useSearchDoctorsQuery({
     departmentId: departmentId,
-    search_val: "",
   });
   // Для упрощения — все доктора будут с фиксированной длительностью 30 минут
   const [selectedDurations, setSelectedDurations] = useState<number[]>([]);
