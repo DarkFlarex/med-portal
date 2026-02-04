@@ -1,10 +1,7 @@
 import { Box, Grid, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { useState, useEffect, useMemo } from "react";
-import {
-  useGetDepartmentsQuery,
-  useSearchDoctorsQuery,
-} from "../../app/api/search"; // путь подкорректируй
+import { useMemo } from "react";
+import { useGetDepartmentsQuery } from "../../app/api/search"; // путь подкорректируй
 interface Department {
   codeid: number;
   name: string;
