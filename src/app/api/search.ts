@@ -1,6 +1,6 @@
 // store/api/misServerApi.ts
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import {API_URL} from "../../constants.ts";
+import { API_URL } from "../../constants.ts";
 
 // Типы для докторов
 export interface Doctor {
@@ -88,20 +88,34 @@ export const misServerApi = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: API_URL }), // <-- поменяй на свой бекенд
   endpoints: (builder) => ({
     // поиск докторов
-    searchDoctors: builder.mutation<SearchResponse, SearchRequest>({
-      query: (body) => ({
-        url: "search",
-        method: "POST",
-        body,
+    searchDoctors: builder.query<SearchResponse, SearchRequest>({
+      query: (params) => ({
+        url: "api/searchDoctors",
+        params,
+      }),
+    }),
+
+    clinics: builder.query<Clinic[], void>({
+      query: () => ({
+        url: "api/clinics",
+        method: "GET",
+      }),
+    }),
+
+    getDepartments: builder.query<any, any>({
+      query: (params) => ({
+        url: "api/departments",
+        method: "GET",
+        params,
       }),
     }),
 
     // получение событий
-    getEvents: builder.mutation<{ event_list: Event[] }, GetEventsRequest>({
-      query: (body) => ({
-        url: "get_events",
-        method: "POST",
-        body,
+    getEvents: builder.query<any, any>({
+      query: (params) => ({
+        url: "/api/get_events",
+        method: "GET",
+        params,
       }),
     }),
 
@@ -143,8 +157,10 @@ export const misServerApi = createApi({
 });
 
 export const {
-  useSearchDoctorsMutation,
-  useGetEventsMutation,
+  useSearchDoctorsQuery,
+  useClinicsQuery,
+  useGetDepartmentsQuery,
+  useGetEventsQuery,
   useUpsertEventMutation,
   useCheckPasswordMutation,
   useUpdateDoctorOnlineMutation,

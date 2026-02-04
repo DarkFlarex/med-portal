@@ -1,13 +1,5 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
-import {
-  FLUSH,
-  PAUSE,
-  PERSIST,
-  PURGE,
-  REGISTER,
-  REHYDRATE,
-  persistStore,
-} from "redux-persist";
+import { persistStore } from "redux-persist";
 
 import { clinicsReducer } from "../features/MedicalFacility/clinicsSlice";
 import { misServerApi } from "./api/search"; // <-- импортируем наш RTK Query API
@@ -21,11 +13,7 @@ const rootReducer = combineReducers({
 export const store = configureStore({
   reducer: rootReducer,
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({
-      serializableCheck: {
-        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
-      },
-    }).concat(misServerApi.middleware), // <-- добавляем middleware RTK Query
+    getDefaultMiddleware().concat(misServerApi.middleware),
 });
 
 export const persistor = persistStore(store);
