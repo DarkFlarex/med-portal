@@ -47,10 +47,14 @@ const PageAppointments = () => {
   const durationFromState = location.state?.duration ?? 30;
   const doctorId = location.state?.doctorId;
   const departmentId = location.state?.departmentId;
+
+  const selectedDateISO = selectedDate
+      ? selectedDate.toISOString()
+      : undefined;
   const { data: busySlots = [] } = useGetEventsQuery({
-    doctorId: doctorId,
-    selectedDate: selectedDate,
-    departmentId: departmentId,
+    doctorId,
+    departmentId,
+    selectedDate: selectedDateISO,
   });
 
   const [selectedTime, setSelectedTime] = useState<string | null>(null);

@@ -1,21 +1,42 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import { persistStore } from "redux-persist";
+import {
+  FLUSH,
+  REHYDRATE,
+  PAUSE,
+  PERSIST,
+  PURGE,
+  REGISTER,
+} from "redux-persist";
 
-import { misServerApi } from "./api/search"; // <-- импортируем наш RTK Query API
+import { misServerApi } from "./api/search";
+import { usersApi } from "./api/users";
 
-// комбинируем редьюсеры
 const rootReducer = combineReducers({
-  [misServerApi.reducerPath]: misServerApi.reducer, // <-- добавляем редьюсер RTK Query
+  [misServerApi.reducerPath]: misServerApi.reducer,
+  [usersApi.reducerPath]: usersApi.reducer,
 });
 
 export const store = configureStore({
   reducer: rootReducer,
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(misServerApi.middleware),
+      getDefaultMiddleware({
+        serializableCheck: {
+          ignoredActions: [
+            FLUSH,
+            REHYDRATE,
+            PAUSE,
+            PERSIST,
+            PURGE,
+            REGISTER,
+          ],
+        },
+      })
+          .concat(misServerApi.middleware)
+          .concat(usersApi.middleware),
 });
 
 export const persistor = persistStore(store);
 
-// Типы для TypeScript
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
