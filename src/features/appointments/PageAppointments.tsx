@@ -180,6 +180,8 @@ const PageAppointments = () => {
   };
 
   // Проверка занятых/недоступных слотов
+  const DEFAULT_DURATION = 30;
+
   const isTimeSlotBusy = (time: string): boolean => {
     const [h, m] = time.split(":").map(Number);
     const minutes = h * 60 + m;
@@ -189,7 +191,10 @@ const PageAppointments = () => {
       const end = new Date(slot.event_end);
 
       const startMinutes = start.getHours() * 60 + start.getMinutes();
-      const endMinutes = end.getHours() * 60 + end.getMinutes();
+      const endMinutes =
+        start.getTime() === end.getTime()
+          ? startMinutes + DEFAULT_DURATION
+          : end.getHours() * 60 + end.getMinutes();
 
       return minutes >= startMinutes && minutes < endMinutes;
     });
@@ -262,21 +267,7 @@ const PageAppointments = () => {
 
   const datePickerRef = useRef<HTMLDivElement>(null);
   const isHoveringRef = useRef(false);
-  // Функция прокрутки вперед/назад на 100px (можно настроить)
-  // const scrollAmount = 100;
 
-  // const scrollLeft = () => {
-  //   if (datePickerRef.current) {
-  //     datePickerRef.current.scrollBy({ left: -scrollAmount, behavior: "smooth" });
-  //   }
-  // };
-  //
-  // const scrollRight = () => {
-  //   if (datePickerRef.current) {
-  //     datePickerRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" });
-  //   }
-  // };
-  // Предотвращаем вертикальный скролл при горизонтальном прокручивании колесом мыши или тачпадом
   useEffect(() => {
     const el = datePickerRef.current;
     if (!el) return;
