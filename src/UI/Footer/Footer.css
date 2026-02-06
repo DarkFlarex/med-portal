@@ -15,7 +15,7 @@
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
-    padding: 40px 0px; /* паддинг по умолчанию для ширины <1156 */
+    padding: 40px 0; /* паддинг по умолчанию для ширины <1156 */
     gap: 30px;
 }
 
