@@ -48,9 +48,7 @@ const PageAppointments = () => {
   const doctorId = location.state?.doctorId;
   const departmentId = location.state?.departmentId;
 
-  const selectedDateISO = selectedDate
-      ? selectedDate.toISOString()
-      : undefined;
+  const selectedDateISO = selectedDate ? selectedDate.toISOString() : undefined;
   const { data: busySlots = [] } = useGetEventsQuery({
     doctorId,
     departmentId,
@@ -208,13 +206,27 @@ const PageAppointments = () => {
     const startISO = doctorFromState?.[`${dayKey}_start`];
     const endISO = doctorFromState?.[`${dayKey}_end`];
 
-    if (!startISO || !endISO) return null;
+    // дефолт: 09:00–16:00
+    const DEFAULT_START = 9 * 60;
+    const DEFAULT_END = 16 * 60;
+
+    if (!startISO || !endISO) {
+      return {
+        startMinutes: DEFAULT_START,
+        endMinutes: DEFAULT_END,
+      };
+    }
 
     const start = new Date(startISO);
     const end = new Date(endISO);
 
-    // если 1970-01-01 → врач не работает
-    if (start.getTime() === 0 && end.getTime() === 0) return null;
+    // если 1970-01-01 → считаем дефолтным рабочим днём
+    if (start.getTime() === 0 || end.getTime() === 0) {
+      return {
+        startMinutes: DEFAULT_START,
+        endMinutes: DEFAULT_END,
+      };
+    }
 
     return {
       startMinutes: start.getUTCHours() * 60 + start.getUTCMinutes(),
