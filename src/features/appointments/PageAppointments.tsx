@@ -200,6 +200,18 @@ const PageAppointments = () => {
     });
   };
 
+  const isSlotTooEarly = (time: string, date: Date) => {
+    const [h, m] = time.split(":").map(Number);
+
+    const slotDate = new Date(date);
+    slotDate.setHours(h, m, 0, 0);
+
+    const nowPlus2h = new Date();
+    nowPlus2h.setMinutes(nowPlus2h.getMinutes() + 120);
+
+    return slotDate < nowPlus2h;
+  };
+
   const isTimeSlotDisabled = (time: string): boolean => {
     const disabledSlots = ["18:00"];
     return disabledSlots.includes(time);
@@ -284,8 +296,15 @@ const PageAppointments = () => {
       if (!isHoveringRef.current) return;
 
       if (e.deltaY !== 0) {
-        e.preventDefault(); // отменяем вертикальный скролл страницы
-        el.scrollLeft += e.deltaY; // скроллим горизонтально колесом мыши
+        e.preventDefault();
+
+        // ⛔ запрещаем скролл влево (в прошлое)
+        if (e.deltaY < 0 && el.scrollLeft <= 0) {
+          el.scrollLeft = 0;
+          return;
+        }
+
+        el.scrollLeft += e.deltaY;
       }
     };
 
@@ -403,6 +422,15 @@ const PageAppointments = () => {
         )}
         <Box className="timeTable">
           {timeSlots.map((time: string, index: number) => {
+            // ⛔ скрываем прошедшее и +2 часа только для сегодняшней даты
+            if (
+              selectedDate &&
+              selectedDate.toDateString() === new Date().toDateString() &&
+              isSlotTooEarly(time, selectedDate)
+            ) {
+              return null;
+            }
+
             const isBusy = isTimeSlotBusy(time);
             const isDisabled = isTimeSlotDisabled(time);
 
