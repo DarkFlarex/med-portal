@@ -1,11 +1,10 @@
-import MedicalFacility from "../MedicalFacility/MedicalFacility.tsx";
-
+import PageDirections from "../directions/PageDirections.tsx";
 
 const MainPage = () => {
 
   return (
     <>
-        <MedicalFacility/>
+        <PageDirections/>
     </>
   );
 };
