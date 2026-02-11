@@ -44,7 +44,7 @@ const PageAppointments = () => {
   console.log(doctorFromState);
 
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
-  const durationFromState = location.state?.duration ?? 30;
+  const durationFromState = location.state?.duration ?? 15;
   const doctorId = location.state?.doctorId;
   const departmentId = location.state?.departmentId;
 
@@ -80,34 +80,6 @@ const PageAppointments = () => {
 
   const dates = generateDates();
 
-  // Генерация временных слотов
-  //   const generateTimeSlots = (stepMinutes: number): string[] => {
-  //     const slots: string[] = [];
-  //     const startHour = 8;
-  //     const endHour = 18;
-
-  //     let current = startHour * 60; // 08:00
-  //     const end = endHour * 60; // 18:00
-
-  //     while (current < end) {
-  //       const hours = Math.floor(current / 60);
-  //       const minutes = current % 60;
-
-  //       slots.push(
-  //         `${hours.toString().padStart(2, "0")}:${minutes
-  //           .toString()
-  //           .padStart(2, "0")}`
-  //       );
-
-  //       current += stepMinutes;
-  //     }
-
-  //     return slots;
-  //   };
-
-  //   const timeSlots = generateTimeSlots(durationFromState);
-
-  // Форматирование даты
   const formatDate = (date: Date): string =>
     date
       .toLocaleDateString("ru-RU", {
@@ -180,7 +152,7 @@ const PageAppointments = () => {
   };
 
   // Проверка занятых/недоступных слотов
-  const DEFAULT_DURATION = 30;
+  const DEFAULT_DURATION = 15;
 
   const isTimeSlotBusy = (time: string): boolean => {
     const [h, m] = time.split(":").map(Number);
@@ -223,9 +195,8 @@ const PageAppointments = () => {
     const startISO = doctorFromState?.[`${dayKey}_start`];
     const endISO = doctorFromState?.[`${dayKey}_end`];
 
-    // дефолт: 09:00–16:00
-    const DEFAULT_START = 9 * 60;
-    const DEFAULT_END = 16 * 60;
+    const DEFAULT_START = 8 * 60; // 480
+    const DEFAULT_END = 16 * 60; // 960
 
     if (!startISO || !endISO) {
       return {
