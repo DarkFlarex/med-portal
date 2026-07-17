@@ -12,6 +12,7 @@ export interface Doctor {
   price: number;
   online_regis: number;
   img: string;
+  duration_priem_min: number;
   monday_start: string | null;
   monday_end: string | null;
   tuesday_start: string | null;
@@ -26,6 +27,43 @@ export interface Doctor {
   saturday_end: string | null;
   sunday_start: string | null;
   sunday_end: string | null;
+}
+
+export interface Service {
+  codeid: number;
+  codeid_department: number;
+  name: string;
+  comment: string | null;
+  cost: number;
+  status: number;
+  type: number | null;
+  header: string | null;
+  sort: number | null;
+  device: string | null;
+}
+
+export interface GetServicesRequest {
+  departmentId?: number;
+  search_val?: string;
+}
+
+export interface BookPatientRequest {
+  code_department: number;
+  code_dep_service: number;
+  event_start: string;
+  event_end?: string;
+  fullname?: string;
+  phone: string;
+  dob?: string;
+  comments?: string;
+  discount?: number;
+  registrator?: string;
+}
+
+export interface BookPatientResponse {
+  success: boolean;
+  message: string;
+  event_id?: number;
 }
 
 export interface Clinic {
@@ -82,6 +120,34 @@ export interface UpdateDoctorRequest {
   online_regis: number;
 }
 
+export interface ServiceItem {
+  id: number;
+  name: string;
+  comment: string | null;
+  cost: number;
+  status: number;
+  type: number | null;
+  header: string | null;
+  device: string | null;
+  sort: number | null;
+}
+
+export interface DepartmentWithServices {
+  id: number;
+  name: string;
+  status: number;
+  color: string | null;
+  type: number | null;
+  code_clinic: number | null;
+  range: number | null;
+  services: ServiceItem[];
+}
+
+export interface DepartmentsWithServicesResponse {
+  success: boolean;
+  data: DepartmentWithServices[];
+}
+
 // ====================== API ======================
 export const misServerApi = createApi({
   reducerPath: "misServerApi",
@@ -110,6 +176,14 @@ export const misServerApi = createApi({
       }),
     }),
 
+    // отделения вместе со своими услугами (для группировки в один запрос)
+    getDepartmentsWithServices: builder.query<DepartmentsWithServicesResponse, void>({
+      query: () => ({
+        url: "api/departments-with-services",
+        method: "GET",
+      }),
+    }),
+
     // получение событий
     getEvents: builder.query({
       query: (params) => ({
@@ -125,6 +199,23 @@ export const misServerApi = createApi({
         url: "upsert_event",
         method: "POST",
         body,
+      }),
+    }),
+
+    getServices: builder.query<Service[], GetServicesRequest>({
+      query: (params) => ({
+        url: "api/get-services",
+        method: "GET",
+        params,
+      }),
+    }),
+
+    // запись пациента на услугу (врач фиксирован на бэкенде)
+    bookPatient: builder.mutation<BookPatientResponse, BookPatientRequest>({
+      query: (params) => ({
+        url: "api/book-patient",
+        method: "GET",
+        params,
       }),
     }),
 
@@ -156,4 +247,7 @@ export const {
   useUpsertEventMutation,
   useCheckPasswordMutation,
   useUpdateDoctorOnlineMutation,
+  useGetServicesQuery,
+  useBookPatientMutation,
+  useGetDepartmentsWithServicesQuery
 } = misServerApi;

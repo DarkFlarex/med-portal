@@ -44,7 +44,7 @@ const PageAppointments = () => {
   console.log(doctorFromState);
 
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
-  const durationFromState = location.state?.duration ?? 15;
+  const durationFromState = location.state?.duration ?? 30;
   const doctorId = location.state?.doctorId;
   const departmentId = location.state?.departmentId;
 
@@ -151,9 +151,6 @@ const PageAppointments = () => {
     }
   };
 
-  // Проверка занятых/недоступных слотов
-  const DEFAULT_DURATION = 15;
-
   const isTimeSlotBusy = (time: string): boolean => {
     const [h, m] = time.split(":").map(Number);
     const minutes = h * 60 + m;
@@ -165,7 +162,7 @@ const PageAppointments = () => {
       const startMinutes = start.getHours() * 60 + start.getMinutes();
       const endMinutes =
         start.getTime() === end.getTime()
-          ? startMinutes + DEFAULT_DURATION
+          ? startMinutes + durationFromState
           : end.getHours() * 60 + end.getMinutes();
 
       return minutes >= startMinutes && minutes < endMinutes;
@@ -189,31 +186,24 @@ const PageAppointments = () => {
     return disabledSlots.includes(time);
   };
 
-  const getDoctorWorkTime = (date: Date) => {
-    const dayKey = weekMap[date.getDay()]; // monday, tuesday и т.д.
+  const getDoctorWorkTime = (
+    date: Date
+  ): { startMinutes: number; endMinutes: number } | null => {
+    const dayKey = weekMap[date.getDay()];
 
     const startISO = doctorFromState?.[`${dayKey}_start`];
     const endISO = doctorFromState?.[`${dayKey}_end`];
 
-    const DEFAULT_START = 8 * 60; // 480
-    const DEFAULT_END = 16 * 60; // 960
-
     if (!startISO || !endISO) {
-      return {
-        startMinutes: DEFAULT_START,
-        endMinutes: DEFAULT_END,
-      };
+      return null;
     }
 
     const start = new Date(startISO);
     const end = new Date(endISO);
 
-    // если 1970-01-01 → считаем дефолтным рабочим днём
+    // 1970-01-01 — врач в этот день не работает
     if (start.getTime() === 0 || end.getTime() === 0) {
-      return {
-        startMinutes: DEFAULT_START,
-        endMinutes: DEFAULT_END,
-      };
+      return null;
     }
 
     return {
@@ -246,7 +236,7 @@ const PageAppointments = () => {
   const timeSlots = useMemo(() => {
     if (!selectedDate) return [];
     return generateTimeSlots(selectedDate, durationFromState);
-  }, [selectedDate, durationFromState]);
+  }, [selectedDate, durationFromState, doctorFromState]);
 
   const datePickerRef = useRef<HTMLDivElement>(null);
   const isHoveringRef = useRef(false);

@@ -1,1 +1,1 @@
-export const API_URL = "https://bishkekmed-online.mis.kg/";
+export const API_URL = "https://sistem-online.mis.kg/";

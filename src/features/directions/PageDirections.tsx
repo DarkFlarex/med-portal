@@ -14,7 +14,7 @@ const PageDirections = () => {
       return {} as Record<string, Department[]>;
 
     return departments?.departaments.reduce((acc: any, dep: any) => {
-      const letter = dep.name[0].toUpperCase();
+      const letter = dep.name?.[0]?.toUpperCase();
 
       if (!acc[letter]) acc[letter] = [];
       acc[letter].push(dep);
@@ -65,27 +65,29 @@ const PageDirections = () => {
               </Typography>
 
               {/* Список отделений */}
-              {items.map((dep: any) => (
-                <Box
-                  key={dep.codeid}
-                  onClick={() =>
-                    navigate("/doctors", {
-                      state: { departmentId: dep.codeid },
-                    })
-                  }
-                  sx={{
-                    p: 1,
-                    cursor: "pointer",
-                    "&:hover": { backgroundColor: "#e3f2fd" },
-                    fontSize: "1rem",
-                    userSelect: "none",
-                  }}
-                  role="button"
-                  tabIndex={0}
-                >
-                  {dep.name}
-                </Box>
-              ))}
+              {items.map((dep: any) => {
+                return (
+                  <Box
+                    key={dep.codeid}
+                    onClick={() => {
+                      return navigate("/doctors", {
+                        state: { departmentId: dep.codeid },
+                      });
+                    }}
+                    sx={{
+                      p: 1,
+                      cursor: "pointer",
+                      "&:hover": { backgroundColor: "#e3f2fd" },
+                      fontSize: "1rem",
+                      userSelect: "none",
+                    }}
+                    role="button"
+                    tabIndex={0}
+                  >
+                    {dep.name}
+                  </Box>
+                );
+              })}
             </Grid>
           ))}
       </Grid>
