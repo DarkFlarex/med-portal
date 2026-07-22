@@ -177,7 +177,10 @@ export const misServerApi = createApi({
     }),
 
     // отделения вместе со своими услугами (для группировки в один запрос)
-    getDepartmentsWithServices: builder.query<DepartmentsWithServicesResponse, void>({
+    getDepartmentsWithServices: builder.query<
+      DepartmentsWithServicesResponse,
+      void
+    >({
       query: () => ({
         url: "api/departments-with-services",
         method: "GET",
@@ -214,8 +217,8 @@ export const misServerApi = createApi({
     bookPatient: builder.mutation<BookPatientResponse, BookPatientRequest>({
       query: (params) => ({
         url: "api/book-patient",
-        method: "GET",
-        params,
+        method: "POST",
+        body: params,
       }),
     }),
 
@@ -249,5 +252,5 @@ export const {
   useUpdateDoctorOnlineMutation,
   useGetServicesQuery,
   useBookPatientMutation,
-  useGetDepartmentsWithServicesQuery
+  useGetDepartmentsWithServicesQuery,
 } = misServerApi;

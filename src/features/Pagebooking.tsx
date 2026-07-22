@@ -61,11 +61,11 @@ const PageBooking = () => {
   const [bookPatient, { isLoading: isBooking }] = useBookPatientMutation();
 
   const [activeDepartmentId, setActiveDepartmentId] = useState<number | null>(
-    null
+    null,
   );
   const [serviceQuery, setServiceQuery] = useState("");
   const [selectedServiceId, setSelectedServiceId] = useState<number | null>(
-    null
+    null,
   );
   const [sheetOpen, setSheetOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -85,7 +85,7 @@ const PageBooking = () => {
 
   const currentDepartmentId = activeDepartmentId ?? departments[0]?.id ?? null;
   const currentDepartment = departments.find(
-    (d) => d.id === currentDepartmentId
+    (d) => d.id === currentDepartmentId,
   );
 
   const filteredServices = useMemo(() => {
@@ -93,15 +93,15 @@ const PageBooking = () => {
     if (!serviceQuery.trim()) return currentDepartment.services;
     const q = serviceQuery.trim().toLowerCase();
     return currentDepartment.services.filter((s) =>
-      s.name.toLowerCase().includes(q)
+      s.name.toLowerCase().includes(q),
     );
   }, [currentDepartment, serviceQuery]);
 
   const selectedDepartment = departments.find((d) =>
-    d.services.some((s) => s.id === selectedServiceId)
+    d.services.some((s) => s.id === selectedServiceId),
   );
   const selectedService = selectedDepartment?.services.find(
-    (s) => s.id === selectedServiceId
+    (s) => s.id === selectedServiceId,
   );
 
   // next 14 days for the date strip
@@ -145,7 +145,7 @@ const PageBooking = () => {
   const eventStartValue = useMemo(() => {
     if (!selectedDate || !selectedTime) return "";
     return `${selectedDate.getFullYear()}-${pad(
-      selectedDate.getMonth() + 1
+      selectedDate.getMonth() + 1,
     )}-${pad(selectedDate.getDate())}T${selectedTime}:00`;
   }, [selectedDate, selectedTime]);
 
@@ -173,6 +173,7 @@ const PageBooking = () => {
         event_start: eventStartValue,
         fullname,
         phone,
+        comments: `Отделение: ${selectedDepartment.name}, Услуга: ${selectedService?.name}`,
       }).unwrap();
 
       if (res.success) {
@@ -260,7 +261,7 @@ const PageBooking = () => {
         bgcolor: bg,
       }}
     >
-      <Box sx={{ px: 2.5, pt: 3, pb: selectedServiceId ? 12 : 4, minWidth: 0 }}>
+      <Box sx={{ pt: 3, pb: selectedServiceId ? 12 : 4, minWidth: 0 }}>
         <Typography sx={{ fontWeight: 700, fontSize: 22, color: ink, mb: 0.3 }}>
           Запись на приём
         </Typography>

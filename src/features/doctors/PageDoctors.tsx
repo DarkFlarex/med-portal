@@ -42,8 +42,8 @@ const PageDoctors = () => {
   const updateDoctor = (id: number, field: keyof Doctor, value: string) => {
     setDoctors((prev) =>
       prev.map((doc) =>
-        doc.doctor_id === id ? { ...doc, [field]: value } : doc
-      )
+        doc.doctor_id === id ? { ...doc, [field]: value } : doc,
+      ),
     );
   };
 
@@ -52,15 +52,18 @@ const PageDoctors = () => {
     updateDoctor(id, "img", url);
   };
 
-  // Переход на запись — срабатывает только если не редактируем сейчас этого доктора
   const onCardClick = (doctor: Doctor) => {
     if (editingId !== doctor.doctor_id) {
+      const comment = `Отделение: ${doctor.department_name}`;
+
       navigate("/appointments", {
         state: {
           doctor,
           departmentId,
+          departmentName: doctor.department_name,
           doctorId: doctor.doctor_id,
           duration: doctor.duration_priem_min ?? 30,
+          comment, // предварительный комментарий, дополнить названием услуги на след. странице
         },
       });
     }
@@ -218,7 +221,7 @@ const PageDoctors = () => {
                       updateDoctor(
                         doctor.doctor_id,
                         "department_name",
-                        e.target.value
+                        e.target.value,
                       )
                     }
                     sx={{ mb: 1 }}

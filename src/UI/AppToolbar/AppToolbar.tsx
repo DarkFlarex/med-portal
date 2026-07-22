@@ -1,28 +1,17 @@
-import { useState } from "react";
-import {
-  AppBar,
-  Box,
-  Container,
-  IconButton,
-  Stack,
-  Toolbar,
-  Typography,
-  Button,
-  Drawer,
-} from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
-import CloseIcon from "@mui/icons-material/Close";
+import { AppBar, Container, Toolbar, Typography } from "@mui/material";
+// import MenuIcon from "@mui/icons-material/Menu";
+// import CloseIcon from "@mui/icons-material/Close";
 import { Link } from "react-router-dom";
 
-const navItems = [
-  // { label: "Клиники", to: "/" },
-  { label: "Специальность", to: "/directions" },
-  { label: "Запись", to: "/records" },
-  { label: "Услуги", to: "/services" },
-];
+// const navItems = [
+//   // { label: "Клиники", to: "/" },
+//   // { label: "Специальность", to: "/directions" },
+//   // { label: "Запись", to: "/records" },
+//   { label: "Услуги", to: "/services" },
+// ];
 
 const AppToolbar = () => {
-  const [open, setOpen] = useState(false);
+  // const [open, setOpen] = useState(false);
 
   return (
     <>
@@ -59,7 +48,7 @@ const AppToolbar = () => {
             </Typography>
 
             {/* DESKTOP */}
-            <Stack
+            {/* <Stack
               direction="row"
               spacing={3}
               sx={{ display: { xs: "none", md: "flex" } }}
@@ -82,23 +71,21 @@ const AppToolbar = () => {
                   {item.label}
                 </Button>
               ))}
-            </Stack>
+            </Stack> */}
 
             {/* BURGER */}
-            <IconButton
+            {/* <IconButton
               onClick={() => setOpen(true)}
               sx={{ display: { xs: "flex", md: "none" }, color: "#1e293b" }}
             >
               <MenuIcon />
-            </IconButton>
+            </IconButton> */}
           </Container>
         </Toolbar>
       </AppBar>
 
-      {/* ===== MOBILE MENU (TOP) ===== */}
-      <Drawer anchor="top" open={open} onClose={() => setOpen(false)}>
+      {/* <Drawer anchor="top" open={open} onClose={() => setOpen(false)}>
         <Box sx={{ p: 2 }}>
-          {/* HEADER DRAWER */}
           <Box
             sx={{
               display: "flex",
@@ -116,7 +103,6 @@ const AppToolbar = () => {
             </IconButton>
           </Box>
 
-          {/* NAV */}
           <Stack spacing={1}>
             {navItems.map((item) => (
               <Button
@@ -136,7 +122,7 @@ const AppToolbar = () => {
             ))}
           </Stack>
         </Box>
-      </Drawer>
+      </Drawer> */}
     </>
   );
 };
